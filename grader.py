@@ -2,7 +2,7 @@
 """
 Grader module for Qiskit Fall Fest 2025 Day 2 exercises.
 
-This module provides the Grader class for evaluating Grover's algorithm implementations.
+This module provides functions for evaluating Grover's algorithm implementations.
 """
 
 from qiskit import QuantumCircuit
@@ -10,162 +10,160 @@ from qiskit.quantum_info import Statevector
 import numpy as np
 
 
-class Grader:
+def ex_1(qc: QuantumCircuit) -> bool:
     """
-    Grader class for evaluating Grover's algorithm exercises.
+    Exercise 1: Check if initial quantum circuit is correct.
     
-    This class provides methods to check if quantum circuit implementations
-    are correct for various Grover's algorithm exercises.
+    Args:
+        qc (QuantumCircuit): The quantum circuit to evaluate.
+        
+    Returns:
+        bool: True if correct, False otherwise.
     """
+    circuit_correct = QuantumCircuit(2, 2)
+
+    if qc == circuit_correct:
+        print("正解です！")
+        return True
+    else:
+        print("不正解です...")
+        return False
+
+
+def ex_2(qc: QuantumCircuit) -> bool:
+    """
+    Exercise 2: Check if Hadamard gates are correctly applied.
     
-    def grover_ex_1(self, qc: QuantumCircuit) -> bool:
-        """
-        Exercise 1: Check if initial quantum circuit is correct.
+    Args:
+        qc (QuantumCircuit): The quantum circuit to evaluate.
         
-        Args:
-            qc (QuantumCircuit): The quantum circuit to evaluate.
-            
-        Returns:
-            bool: True if correct, False otherwise.
-        """
-        circuit_correct = QuantumCircuit(2, 2)
+    Returns:
+        bool: True if correct, False otherwise.
+    """
+    circuit_correct = QuantumCircuit(2, 2)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
 
-        if qc == circuit_correct:
-            print("正解です！")
-            return True
-        else:
-            print("不正解です...")
-            return False
+    if qc == circuit_correct:
+        print("正解です！")
+        return True
+    else:
+        print("不正解です...")
+        return False
 
-    def grover_ex_2(self, qc: QuantumCircuit) -> bool:
-        """
-        Exercise 2: Check if Hadamard gates are correctly applied.
+
+def ex_3(qc: QuantumCircuit) -> bool:
+    """
+    Exercise 3: Check if Oracle (CZ gate) is correctly applied.
+    
+    Args:
+        qc (QuantumCircuit): The quantum circuit to evaluate.
         
-        Args:
-            qc (QuantumCircuit): The quantum circuit to evaluate.
-            
-        Returns:
-            bool: True if correct, False otherwise.
-        """
-        circuit_correct = QuantumCircuit(2, 2)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
+    Returns:
+        bool: True if correct, False otherwise.
+    """
+    psi = Statevector.from_instruction(qc)
+    amplitudes = psi.data  # array([a0, a1, a2, a3])
 
-        if qc == circuit_correct:
-            print("正解です！")
-            return True
-        else:
-            print("不正解です...")
-            return False
+    circuit_correct = QuantumCircuit(2, 2)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    circuit_correct.cz(0, 1)
+    psi_correct = Statevector.from_instruction(circuit_correct)
+    amplitudes_correct = psi_correct.data
 
-    def grover_ex_3(self, qc: QuantumCircuit) -> bool:
-        """
-        Exercise 3: Check if Oracle (CZ gate) is correctly applied.
+    is_correct = np.allclose(amplitudes, amplitudes_correct)
+    
+    if is_correct:
+        print("正解です！")
+        return True
+    else:
+        print("不正解です...")
+        return False
+
+
+def ex_4(qc: QuantumCircuit) -> bool:
+    """
+    Exercise 4: Check if diffusion operator is correctly applied.
+    
+    Args:
+        qc (QuantumCircuit): The quantum circuit to evaluate.
         
-        Args:
-            qc (QuantumCircuit): The quantum circuit to evaluate.
-            
-        Returns:
-            bool: True if correct, False otherwise.
-        """
-        psi = Statevector.from_instruction(qc)
-        amplitudes = psi.data  # array([a0, a1, a2, a3])
+    Returns:
+        bool: True if correct, False otherwise.
+    """
+    psi = Statevector.from_instruction(qc)
+    amplitudes = psi.data  # array([a0, a1, a2, a3])
+    
+    circuit_correct = QuantumCircuit(2, 2)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    circuit_correct.cz(0, 1)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    circuit_correct.x(0)
+    circuit_correct.x(1)
+    circuit_correct.h(1)
+    circuit_correct.cx(0, 1)
+    circuit_correct.h(1)
+    circuit_correct.x(0)
+    circuit_correct.x(1)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    psi_correct = Statevector.from_instruction(circuit_correct)
+    amplitudes_correct = psi_correct.data
 
-        circuit_correct = QuantumCircuit(2, 2)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        circuit_correct.cz(0, 1)
-        psi_correct = Statevector.from_instruction(circuit_correct)
-        amplitudes_correct = psi_correct.data
+    is_correct = np.allclose(amplitudes, amplitudes_correct)
+    
+    if is_correct:
+        print("正解です！")
+        return True
+    else:
+        print("不正解です...")
+        return False
 
-        is_correct = np.allclose(amplitudes, amplitudes_correct)
+
+def ex_5(qc: QuantumCircuit) -> bool:
+    """
+    Exercise 5: Check if complete Grover's algorithm with measurement is correct.
+    
+    Args:
+        qc (QuantumCircuit): The quantum circuit to evaluate.
         
-        if is_correct:
-            print("正解です！")
-            return True
-        else:
-            print("不正解です...")
-            return False
+    Returns:
+        bool: True if correct, False otherwise.
+    """
+    circuit_correct = QuantumCircuit(2, 2)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    circuit_correct.h(1)
+    circuit_correct.cx(0, 1)
+    circuit_correct.h(1)
+    circuit_correct.id(0)
+    circuit_correct.id(0)
+    circuit_correct.h(0)
+    circuit_correct.h(1)   
+    circuit_correct.x(0)
+    circuit_correct.x(1)
+    circuit_correct.h(1)
+    circuit_correct.cx(0, 1)
+    circuit_correct.id(0)
+    circuit_correct.h(1)
+    circuit_correct.x(0)
+    circuit_correct.x(1)
+    circuit_correct.h(0)
+    circuit_correct.h(1)
+    circuit_correct.measure(0, 0)
+    circuit_correct.measure(1, 1)
 
-    def grover_ex_4(self, qc: QuantumCircuit) -> bool:
-        """
-        Exercise 4: Check if diffusion operator is correctly applied.
-        
-        Args:
-            qc (QuantumCircuit): The quantum circuit to evaluate.
-            
-        Returns:
-            bool: True if correct, False otherwise.
-        """
-        psi = Statevector.from_instruction(qc)
-        amplitudes = psi.data  # array([a0, a1, a2, a3])
-        
-        circuit_correct = QuantumCircuit(2, 2)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        circuit_correct.cz(0, 1)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        circuit_correct.x(0)
-        circuit_correct.x(1)
-        circuit_correct.h(1)
-        circuit_correct.cx(0,1)
-        circuit_correct.h(1)
-        circuit_correct.x(0)
-        circuit_correct.x(1)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        psi_correct = Statevector.from_instruction(circuit_correct)
-        amplitudes_correct = psi_correct.data
-
-        is_correct = np.allclose(amplitudes, amplitudes_correct)
-        
-        if is_correct:
-            print("正解です！")
-            return True
-        else:
-            print("不正解です...")
-            return False
-
-    def grover_ex_5(self, qc: QuantumCircuit) -> bool:
-        """
-        Exercise 5: Check if complete Grover's algorithm with measurement is correct.
-        
-        Args:
-            qc (QuantumCircuit): The quantum circuit to evaluate.
-            
-        Returns:
-            bool: True if correct, False otherwise.
-        """
-        circuit_correct = QuantumCircuit(2, 2)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        circuit_correct.h(1)
-        circuit_correct.cx(0,1)
-        circuit_correct.h(1)
-        circuit_correct.id(0)
-        circuit_correct.id(0)
-        circuit_correct.h(0)
-        circuit_correct.h(1)   
-        circuit_correct.x(0)
-        circuit_correct.x(1)
-        circuit_correct.h(1)
-        circuit_correct.cx(0,1)
-        circuit_correct.id(0)
-        circuit_correct.h(1)
-        circuit_correct.x(0)
-        circuit_correct.x(1)
-        circuit_correct.h(0)
-        circuit_correct.h(1)
-        circuit_correct.measure(0,0)
-        circuit_correct.measure(1,1)
-
-        if qc == circuit_correct:
-            print("正解です！")
-            return True
-        else:
-            print("不正解です...")
-            return False
+    if qc == circuit_correct:
+        print("正解です！")
+        return True
+    else:
+        print("不正解です...")
+        return False
 
 
-__all__ = ['Grader']
+__all__ = ['ex_1', 'ex_2', 'ex_3', 'ex_4', 'ex_5']
+
+
